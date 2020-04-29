@@ -1,2 +1,5 @@
 # Binaries
 *.pyc
+
+# JetBrains
+.idea

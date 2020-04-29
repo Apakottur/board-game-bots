@@ -1,2 +1,3 @@
-# SixNimmt
-The "6 Nimmt!" game.
+# Board Game Bots
+
+Bots for board games.
