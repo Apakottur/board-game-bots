@@ -1,5 +1,8 @@
-# Binaries
+# Python binaries
 *.pyc
+
+# Python virtual environment
+venv
 
 # JetBrains
 .idea

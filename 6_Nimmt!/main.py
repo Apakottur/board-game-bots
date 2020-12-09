@@ -15,7 +15,7 @@ CARD_POINTS = {
 
 CARDS_PER_PLAYER = 10
 
-MAX_POINTS = 66
+START_POINTS = 66
 
 
 class Player:
@@ -34,7 +34,10 @@ class Player:
     def on_get_next_card(self) -> int:
         return self.cards_in_hands.pop()
 
-    def on_played_cards(self, card_by_player: Dict[int, int]):
+    def on_pick_row(self) -> int:
+        return 1
+
+    def on_turn_cards(self, card_by_player_id: Dict[int, int]):
         pass
 
 
@@ -48,11 +51,31 @@ class Game:
         self.players_by_id: Dict[int, Player] = {i: player for i, player in enumerate(players)}
         self.player_amount = len(players)
 
+        # Overall
+        self.score_by_player_id: Dict[int, int] = {i: START_POINTS for i in self.players_by_id}
+
         # Single round
-        self.cards_by_player_id = {i: [] for i in self.players_by_id}
+        self.hand_cards_by_player_id = {i: [] for i in self.players_by_id}
+
+        self.turn_cards_by_player_id = {}
+
         self.cards_on_table = {1: [], 2: [], 3: [], 4: []}
 
-    def run_single_round(self):
+    def _find_row_for_card(self, card: int) -> int:
+
+        pass
+
+    def _add_card_to_row(self, player_id: int, card: int, row: int):
+        pass
+
+    def _add_cards_to_table(self, cards_by_player_id: Dict[int, int]):
+        s = {k: v for k, v in sorted(cards_by_player_id.items(), key=lambda item: item[1])}
+        for player_id, card in s.items():
+            print(player_id, card, self.cards_on_table)
+            row = self._find_row_for_card(card)
+            self._add_card_to_row(player_id, card, row)
+
+    def run_single_round(self) -> Dict[int, int]:
         remaining_cards = list(ALL_CARDS)
         random.shuffle(remaining_cards)
 
@@ -68,7 +91,23 @@ class Game:
             p_cards.extend(new_cards)
             self.players_by_id[p_id].on_game_start(self.player_amount, new_cards, self.cards_on_table)
 
+        # Run the game turns
+        for i in range(10):
+            print(f"Turn {i}")
+            played_card_by_player_id = {}
+            for player_id, player in self.players_by_id.items():
+                played_card_by_player_id[player_id] = player.on_get_next_card()
+            print(played_card_by_player_id)
+
         print(remaining_cards)
+
+        return {}
+
+    def run(self):
+        while 0 < min(self.score_by_player_id.values()):
+            self.run_single_round()
+
+        print(f"Game ended, final scoring: {self.score_by_player_id}")
 
 
 def main():
@@ -76,7 +115,7 @@ def main():
 
     game = Game(players)
 
-    game.run_single_round()
+    game.run()
 
 
 if __name__ == "__main__":
